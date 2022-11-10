@@ -4,8 +4,9 @@
 
 #include "Adafruit_INA219.h"
 
-#define SD_PIN 10
+#define VERBOSE
 
+#define SD_PIN 10
 #define VOLT_AMP_PRECISION 0
 #define AMP_ONLY_PRECISION 0
 
@@ -45,7 +46,7 @@ void setup() {
     while(1);
   }
 
-  myFile.println("Shunt Voltage (mV),Bus Voltage (V),Load Voltage (V),Current (mA),Power (mW)");
+  myFile.println("Time (ms),Shunt Voltage (mV),Bus Voltage (V),Load Voltage (V),Current (mA),Power (mW)");
   
   if(!INA.begin()){
     Serial.println("Failed to Initialize INA219 Sensor");
@@ -115,7 +116,7 @@ void SDLog(void){
   SensorData_t * tmp;
   tmp = &sensorData;
   
-  buffer = String(tmp->shunt_v) + "," + String(tmp->bus_v) + "," + String(tmp->load_v) + "," + String(tmp->current) + "," + String(tmp->power); 
+  buffer = String(millis()) + "," + String(tmp->shunt_v) + "," + String(tmp->bus_v) + "," + String(tmp->load_v) + "," + String(tmp->current) + "," + String(tmp->power); 
   
   #ifdef VERBOSE
   Serial.println(buffer);
