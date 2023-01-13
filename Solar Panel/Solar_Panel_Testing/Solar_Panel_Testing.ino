@@ -6,7 +6,7 @@
 
 #define VERBOSE
 
-#define SD_PIN 10
+#define SD_PIN 10 // Whatever pin the SD need to be connected to
 #define VOLT_AMP_PRECISION 0
 #define AMP_ONLY_PRECISION 0
 
@@ -23,8 +23,8 @@ void SDLog(void);
 
 File myFile;
 Adafruit_INA219 INA;
-SensorData_t sensorData;
-const long interval = 1000; // 1 ms
+SensorData_t sensorData = {0};
+const long interval = 1000; // 1 s
 long lastWriteTime = 0;
 
 void setup() {
@@ -39,6 +39,8 @@ void setup() {
   if(!SD.begin(SD_PIN)){
     Serial.println("Failed to initialize SD Card \nCheck Pin Config");
     while(1);
+  }else{
+  
   }
 
   if(myFile = SD.open("SolarPanelData.txt", FILE_WRITE)){
@@ -47,7 +49,7 @@ void setup() {
   }
 
   myFile.println("Time (ms),Shunt Voltage (mV),Bus Voltage (V),Load Voltage (V),Current (mA),Power (mW)");
-  
+  myFile.close();
   if(!INA.begin()){
     Serial.println("Failed to Initialize INA219 Sensor");
   }
@@ -113,16 +115,32 @@ void updateData(void){
 void SDLog(void){
   String buffer;
   
-  SensorData_t * tmp;
-  tmp = &sensorData;
+  //SensorData_t * tmp;
+  //tmp = &sensorData;
   
-  buffer = String(millis()) + "," + String(tmp->shunt_v) + "," + String(tmp->bus_v) + "," + String(tmp->load_v) + "," + String(tmp->current) + "," + String(tmp->power); 
+  //buffer = String(millis()) + "," + String(sensorData.shunt_v) + "," + String(sensorData.bus_v) + "," + String(sensorData.load_v) + "," + String(sensorData.current) + "," + String(sensorData.power)); 
   
   #ifdef VERBOSE
-  Serial.println(buffer);
+  Serial.println("\n***** Start of Reading ****");
+  Serial.println(sensorData.shunt_v);
+  Serial.println(sensorData.bus_v);
+  Serial.println(sensorData.power);
+  Serial.println(sensorData.current);
+  Serial.println(sensorData.load_v); 
+  Serial.println("***** End of Reading *****\n");   
+  
   #endif
-  
-  myFile.println(buffer);
-  
+  if(myFile = SD.open("SolarPanelData.txt", FILE_WRITE)){
+    myFile.print(sensorData.shunt_v);
+    myFile.print(",");
+    myFile.print(sensorData.bus_v);
+    myFile.print(",");
+    myFile.print(sensorData.power);
+    myFile.print(",");
+    myFile.print(sensorData.current);
+    myFile.print(",");
+    myFile.print(sensorData.load_v); 
+    myFile.close();
+  }
   return;
 }
