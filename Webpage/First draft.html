@@ -1,0 +1,29 @@
+<html>
+  <body>
+    <form>
+      <label for="input1">GPS</label>
+      <input type="text" id="input1" name="input1" value="0"/>
+      <input type="text" id="input1" name="input1" value="0"/>
+      <br>
+      <label for="input2">Wind Vane</label>
+      <input type="text" id="input2" name="input2" value="0"/>
+      <input type="text" id="input2" name="input2" value="0"/>
+      <br>
+      <label for="input3">Compass</label>
+      <input type="text" id="input3" name="input3" value="0"/>
+    </form>
+    <br>
+    <button onclick="incrementAll()">Increment All</button>
+  </body>
+  <script>
+    function incrementAll() {
+      var inputFields = document.getElementsByTagName('input');
+      for (var i = 0; i < inputFields.length; i++) {
+        if (inputFields[i].type === "text") {
+          var currentValue = parseInt(inputFields[i].value);
+          inputFields[i].value = currentValue + 1;
+        }
+      }
+    }
+  </script>
+</html>
