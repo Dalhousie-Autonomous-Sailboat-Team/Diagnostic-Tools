@@ -121,13 +121,18 @@ void SDLog(void){
   //buffer = String(millis()) + "," + String(sensorData.shunt_v) + "," + String(sensorData.bus_v) + "," + String(sensorData.load_v) + "," + String(sensorData.current) + "," + String(sensorData.power)); 
   
   #ifdef VERBOSE
-  Serial.println("\n***** Start of Reading ****");
-  Serial.println(sensorData.shunt_v);
-  Serial.println(sensorData.bus_v);
-  Serial.println(sensorData.power);
-  Serial.println(sensorData.current);
-  Serial.println(sensorData.load_v); 
-  Serial.println("***** End of Reading *****\n");   
+ 
+  Serial.print(sensorData.shunt_v);
+  Serial.print(",");
+  Serial.print(sensorData.bus_v);
+  Serial.print(",");
+  Serial.print(sensorData.power);
+  Serial.print(",");
+  Serial.print(sensorData.current);
+  Serial.print(",");
+  Serial.println(sensorData.load_v);
+   
+     
   
   #endif
   if(myFile = SD.open("SolarPanelData.txt", FILE_WRITE)){
