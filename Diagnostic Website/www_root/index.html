@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Dalmast Diagnostic Site</title>
+
+    <link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+<header class="pg-banner">
+    <div class="header-container">
+        <h1>Dalmast</h1>
+    </div>
+</header>
+
+<main class="container">
+    <div class="sensor-box" id="GPS">
+        <h2>GPS</h2>
+        <p>Latitude:<span id="GPS-Latitude">text</span></p>
+        <p>Longitude:<span id="GPS-Longitude"></span></p>
+    </div>
+    <div class="sensor-box" id="wind-vane">
+        <h2>Wind Vane</h2>
+        <p>Wind Speed: <span id="wind-speed"></span></p>
+        <p>Wind Direction: <span id="wind-direction"></span></p>
+    </div>
+    <div class="sensor-box" id="compass">
+        <h2>Compass</h2>
+        <p>Yaw: <span id="yaw"></span></p>
+        <p>Pitch: <span id="pitch"></span></p>
+        <p>Row: <span id="row"></span></p>
+    </div>
+    <div class="sensor-box" id="angular-sensor">
+        <h2>Angular Sensor</h2>
+        <p>Angle: <span id="angle"></span></p>
+    </div>
+    <div class="sensor-box" id="rudder-motor">
+        <h2>Rudder Motor</h2>
+        <p>Position: <span id="rudder-position"></span></p>
+    </div>
+    <div class="sensor-box" id="actuator">
+        <h2>Actuator</h2>
+        <p>Position: <span id="actuator-position"></span></p>
+    </div>
+    <div class="sensor-box" id="waypoint">
+        <h2>Current Waypoint</h2>
+        <p>Lat: <span id="waypoint-lat"></span></p>
+        <p>Long: <span id="waypoint-long"></span></p>
+        <p>Radius: <span id="waypoint-radius"></span></p>
+    </div>
+
+
+</main>
+
+<!-- Link to the JavaScript data file -->
+<script src="js/data.js"></script>
+
+<!-- Link to the main JavaScript file -->
+<script src="js/script.js"></script>
+</body>
+</html>
