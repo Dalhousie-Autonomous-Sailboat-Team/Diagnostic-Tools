@@ -1,0 +1,154 @@
+/* General body styling, body set up as a grid container */
+body {
+    width: 80vw;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(5, auto);
+
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Page banner styling, set to appear on the top row */
+.pg-banner {
+    grid-row: 1/2;
+    grid-column: 1/-1;
+    border-bottom: 5px solid steelblue;
+}
+
+.header-container {
+    padding: 0 0.5em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Page footer styling, set to apper on the bottom row */
+.pg-footer {
+    padding: 0 0.5em;
+    grid-row: -3/-2;
+    grid-column: 1/-1;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border-top: 1px solid gold;
+    font-size: smaller;
+}
+
+/* Navigation elements - primary (main nav in the banner), secondary (smaller nav in the banner) and footer nav. */
+.primary-nav {
+    display: flex;
+}
+
+.primary-nav > a {
+    margin: 0 0 0 1em;
+    color: steelblue;
+    text-decoration: none;
+}
+
+.primary-nav > a:hover,
+.primary-nav > a:active {
+    color: maroon;
+}
+
+.footer-nav {
+    display: flex;
+}
+
+.footer-nav > a {
+    margin: 0 0 0 1em;
+    color: steelblue;
+    text-decoration: none;
+}
+
+.footer-nav > a:hover,
+.footer-nav > a:active {
+    color: maroon;
+}
+
+
+/* Main content container to include all the flights */
+.container {
+    margin: 10px;
+    min-height: 300px;
+
+    grid-column: 1/5;
+
+    display: flex;
+    flex-flow: wrap;
+}
+
+
+/* Flight "bag" styling */
+.flights-selection-bag {
+    background-color: #172b86;
+    border: 2px black solid;
+    color: lightskyblue;
+}
+
+
+/* Flight info boxes */
+.sensor-box {
+    background-color: lightskyblue;
+    border: 2px lightgray double;
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    margin: 0.5rem;
+    padding-bottom: 0.2rem;
+    padding-top: 1rem;
+}
+
+/*Center text in info-boxes*/
+.sensor-box h2, .sensor-box p, .sensor-box button {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    margin: auto;
+}
+
+/*Italic and color for destination and stops*/
+.sensor-box p {
+    font-style: italic;
+    color: #1c788f;
+}
+
+/*Spacing */
+.sensor-box h2 {
+    padding-bottom: 1rem;
+}
+
+button {
+    display: flex;
+    align-self: flex-start;
+    border-radius: 5px;
+    border: none;
+}
+
+.flight-availability-info {
+    background-color: #07597a;
+    color: lightskyblue;
+
+}
+
+/*Mobile CSS*/
+@media only screen and (max-width: 840px) {
+    /*1 Info box per line*/
+    .sensor-box {
+        width: 100%;
+    }
+
+    /*Hide Sign in, Google Flights, Privacy Policy, Terms and Conditions*/
+    .primary-nav, .footer-nav {
+        display: none;
+    }
+
+    /*Center footer*/
+    .pg-footer {
+        display: flex;
+        justify-content: center;
+    }
+}
