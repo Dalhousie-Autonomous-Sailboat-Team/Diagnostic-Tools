@@ -38,6 +38,7 @@ const char* PARAM_INPUT_1 = "rudder";
 const char* PARAM_INPUT_2 = "sail";
 
 String webpage = WEBSITE; 
+String msg_send_c;
 
 extern "C" enum status_code parse(char *msg, RADIO_GenericMsg *radio_msg);
 
@@ -47,6 +48,9 @@ const char* password = "12345678";
 
 WebSocketsServer webSocket = WebSocketsServer(81);
 AsyncWebServer server(80);
+
+bool skip = false;
+bool send = false;
 
 void setup() {
 	// put your setup code here, to run once:
@@ -86,10 +90,8 @@ void setup() {
 }
 
 void loop() {
-
+	//skip = false;
 	webSocket.loop();
-
-	strcpy(msg, SerialPort.readString().c_str());
 
 	// convert input from website from string to int...
 	_sail_angle = atoi(sail_data);
@@ -106,8 +108,7 @@ void loop() {
 		if(_sail_angle>=10 && _sail_angle<=65 && _rudder_angle>=-45 && _rudder_angle<=45){
 			
 			// Create DALSAIL message for rudder and sail
-			String msg_send;
-			String msg_send_c;
+			
 			String rudder(rudder_data);
 			String sail(sail_data);
 
@@ -122,23 +123,38 @@ void loop() {
 			char chk_sum[20];
 			sprintf(chk_sum, "%02X", ck_sum);
 			msg_send_c += chk_sum;
-
+			msg_send_c += '\n';
 			// Send DALSAIL message over XBEE;
-			SerialPort.print(msg_send_c);
+
+			send = true;
 		}
 	}
 
+	if(send) {
+		SerialPort.print(msg_send_c);
+		Serial.print("Sending message: ");
+		Serial.println(msg_send_c);
+		delay(1500);
+	}
+
 	if(SerialPort.available()){
+
+		strcpy(msg, SerialPort.readString().c_str());
 		if(parse(msg, &radio_msg) == STATUS_OK) {
 			
-			// if status ok then data is valid and update the website using json packets
+			//if status ok then data is valid and update the website using json packets
 			switch(radio_msg.type)
 			{
 				case RADIO_ACK:
 
+					Serial.print("Received ack, type: ");
+					Serial.println(radio_msg.fields.ack.status);
+					send = false;
+					SerialPort.println();
 					break;
-				case RADIO_MODE:
 
+				case RADIO_MODE:
+					
 					break;
 				case RADIO_STATE:
 
@@ -214,11 +230,16 @@ void loop() {
 					
 				case RADIO_RESET:
 
+					Serial.print("Reset cause: ");
+					Serial.println(radio_msg.fields.reset.cause);
 					break;
 				
 				default:
+					Serial.println("Defaulted, bad param");
 					break;
 			}
 		}
 	}
+
+	memset(msg, 0, RADIO_MSG_BUFFER_LENGTH);
 }

@@ -81,7 +81,7 @@ typedef enum RADIO_Statuses {
 } RADIO_Status;
 
 typedef struct RADIO_AckData {
-	RADIO_Status		status;
+	int		status;
 } RADIO_AckData;
 
 typedef struct RADIO_ModeData {
@@ -129,7 +129,7 @@ typedef struct RADIO_NavData {
 } RADIO_NavData;
 
 typedef struct RADIO_ResetData {
-	CTRL_ResetCause		cause;
+	int					cause;
 } RADIO_ResetData;
 
 typedef struct RADIO_GenericMsg {
