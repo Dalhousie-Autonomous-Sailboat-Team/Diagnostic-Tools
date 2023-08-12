@@ -157,6 +157,7 @@ void loop() {
 		SerialPort.print(msg_send_c);
 		Serial.print("Sending message: ");
 		Serial.println(msg_send_c);
+		send = false;
 		delay(1500);
 	}
 
