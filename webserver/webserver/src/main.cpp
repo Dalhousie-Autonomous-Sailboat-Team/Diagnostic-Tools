@@ -105,7 +105,7 @@ void loop() {
 		_rudder_data = _rudder_angle;	
 
 		//check whether the angle's are within the required range 
-		if(_sail_angle>=10 && _sail_angle<=65 && _rudder_angle>=-45 && _rudder_angle<=45){
+		if(_sail_angle>=25 && _sail_angle<=115 && _rudder_angle>=5 && _rudder_angle<=295){
 			
 			// Create DALSAIL message for rudder and sail
 			
@@ -127,7 +127,30 @@ void loop() {
 			// Send DALSAIL message over XBEE;
 
 			send = true;
+			
+			// while(!received) {
+
+			// 	SerialPort.print(msg_send_c);
+
+			// 	Serial.print("Sending message: ");
+			// 	Serial.println(msg_send_c);
+
+			// 	if(SerialPort.available()) {
+			// 		strcpy(msg, SerialPort.readString().c_str());
+			// 		if(parse(msg, &radio_msg) == STATUS_OK) {
+			// 			switch(radio_msg.type) {
+			// 				case RADIO_ACK:
+			// 					received = true;
+			// 					break;
+			// 				default:
+			// 					received = false;
+			// 					break;
+			// 			}
+			// 		}
+			// 	}
+			// }
 		}
+		// skip = true;
 	}
 
 	if(send) {
