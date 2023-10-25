@@ -88,8 +88,8 @@
                     <h2>Control Data</h2>\
                     <fieldset class='round'>\
                     <form action='/get'>\
-                    Rudder[5,295]: <input type='text' name='rudder'><br>\
-                    Sail[25,115]: <input type='text' name='sail'><br>\
+                    Rudder[5,255]: <input type='text' name='rudder'><br>\
+                    Sail[0,145]: <input type='text' name='sail'><br>\
                     <input type='submit' value='Submit'>\
                     </form>\
                     </fieldset>\

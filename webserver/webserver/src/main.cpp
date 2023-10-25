@@ -105,7 +105,7 @@ void loop() {
 		_rudder_data = _rudder_angle;	
 
 		//check whether the angle's are within the required range 
-		if(_sail_angle>=25 && _sail_angle<=115 && _rudder_angle>=5 && _rudder_angle<=295){
+		if(_sail_angle>=0 && _sail_angle<=145 && _rudder_angle>=5 && _rudder_angle<=255){
 			
 			// Create DALSAIL message for rudder and sail
 			
