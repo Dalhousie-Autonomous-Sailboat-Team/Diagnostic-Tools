@@ -13,11 +13,18 @@ const char* CONTROLDATA =
             position: relative;\
             background-color: #ffffff;\
             padding: 0.01px 0;\
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); \
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);\
         }\
         body {\
             margin: 0;\
             padding: 0;\
+            font-family: Tahoma;\
+            width: 100%;\
+            height: 100vh;\
+            margin: 0;\
+            font-size: 16px;\
+            color: #333;\
+            background-color: #f5f5f5;\
         }\
         .site-header__wrapper {\
             display: flex;\
