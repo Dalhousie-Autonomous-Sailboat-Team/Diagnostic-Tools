@@ -19,6 +19,12 @@ Date: Aug 6, 2023
 #include "parse.h"
 #include "website.h"
 
+#include "ControlData.h"
+
+#include "NavigationData.h"
+
+#include "SensorData.h"
+
 // Configure IP addresses of the local access point
 IPAddress local_IP(192,168,1,66);
 IPAddress gateway(192,168,1,7);
@@ -38,6 +44,9 @@ const char* PARAM_INPUT_1 = "rudder";
 const char* PARAM_INPUT_2 = "sail";
 
 String webpage = WEBSITE; 
+String controlData = CONTROLDATA;
+String navigationData = NAVIGATIONDATA;
+String sensorData = SENSORDATA;
 String msg_send_c;
 
 extern "C" enum status_code parse(char *msg, RADIO_GenericMsg *radio_msg);
@@ -69,7 +78,23 @@ void setup() {
 
 	//when server is on, it sends the HTML page WEBSITE
   	server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    	request->send_P(200, "text/html", WEBSITE);
+    	// request->send_P(200, "text/html", WEBSITE); // old
+		request->send_P(200, "text/html", CONTROLDATA); // new version entry
+  	});
+
+	// Control Data page, HOME PAGE
+  	server.on("/controlData", HTTP_GET, [](AsyncWebServerRequest *request){
+    	request->send_P(200, "text/html", CONTROLDATA);
+  	});
+
+	// Navigation Page
+	server.on("/navigationData", HTTP_GET, [](AsyncWebServerRequest *request){
+    	request->send_P(200, "text/html", NAVIGATIONDATA);
+  	});
+
+	// Sensor Data Page
+	server.on("/sensorData", HTTP_GET, [](AsyncWebServerRequest *request){
+    	request->send_P(200, "text/html", SENSORDATA);
   	});
 
 	//when the server recieves input from the user, it needs to do the following
