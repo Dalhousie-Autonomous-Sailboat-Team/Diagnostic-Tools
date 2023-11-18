@@ -52,6 +52,14 @@ AsyncWebServer server(80);
 bool skip = false;
 bool send = false;
 
+int length = 0;
+
+// String JsonString = "";
+// StaticJsonDocument<256> doc;
+// JsonObject object = doc.to<JsonObject>();
+
+void func_web(char *msg);
+
 void setup() {
 	// put your setup code here, to run once:
 	Serial.begin(115200);
@@ -98,14 +106,14 @@ void loop() {
 	_rudder_angle = atoi(rudder_data);
 
 	// check if current value is different than prev value
-	if(_sail_angle != _sail_data && _rudder_angle != _rudder_data){ 
-		
+	if(_sail_angle != _sail_data || _rudder_angle != _rudder_data){
+	// if(true) {
 		// Update prev
 		_sail_data = _sail_angle;			
 		_rudder_data = _rudder_angle;	
 
 		//check whether the angle's are within the required range 
-		if(_sail_angle>=0 && _sail_angle<=145 && _rudder_angle>=5 && _rudder_angle<=255){
+		if(_sail_angle>=5 && _sail_angle<=140 && _rudder_angle>=70 && _rudder_angle<=240){
 			
 			// Create DALSAIL message for rudder and sail
 			
@@ -127,28 +135,6 @@ void loop() {
 			// Send DALSAIL message over XBEE;
 
 			send = true;
-			
-			// while(!received) {
-
-			// 	SerialPort.print(msg_send_c);
-
-			// 	Serial.print("Sending message: ");
-			// 	Serial.println(msg_send_c);
-
-			// 	if(SerialPort.available()) {
-			// 		strcpy(msg, SerialPort.readString().c_str());
-			// 		if(parse(msg, &radio_msg) == STATUS_OK) {
-			// 			switch(radio_msg.type) {
-			// 				case RADIO_ACK:
-			// 					received = true;
-			// 					break;
-			// 				default:
-			// 					received = false;
-			// 					break;
-			// 			}
-			// 		}
-			// 	}
-			// }
 		}
 		// skip = true;
 	}
@@ -161,109 +147,135 @@ void loop() {
 		delay(1500);
 	}
 
-	if(SerialPort.available()){
+	while (SerialPort.available()) {
 
-		strcpy(msg, SerialPort.readString().c_str());
-		if(parse(msg, &radio_msg) == STATUS_OK) {
+		int data = SerialPort.read();	
+
+		if(data == '\n') {
+			msg[length] = '\0';
+			Serial.print("Message: ");
+			Serial.println(msg);
+			Serial.println("**********************");	
+			length = 0;
+			func_web(msg);
+		} else {
+			msg[length++] = data;
+		}
+	}
+}
+
+float lat = 0, lon = 0, wind_dir = 0, wind_speed = 0,
+	  yaw = 0, pitch = 0, row = 0, distance = 0, bearing = 0, course = 0,
+	  rad = 0, comp_reading = 0, nav_lat = 0, nav_lon = 0;
+
+uint16_t r_angle = 0, s_angle = 0;
+
+void func_web(char *msg) 
+{
+	if(parse(msg, &radio_msg) == STATUS_OK) {
 			
-			//if status ok then data is valid and update the website using json packets
-			switch(radio_msg.type)
-			{
-				case RADIO_ACK:
+		//if status ok then data is valid and update the website using json packets
+		switch(radio_msg.type)
+		{
+			case RADIO_ACK:
 
-					Serial.print("Received ack, type: ");
-					Serial.println(radio_msg.fields.ack.status);
-					send = false;
-					SerialPort.println();
-					break;
+				Serial.print("Received ack, type: ");
+				Serial.println(radio_msg.fields.ack.status);
+				send = false;
+				SerialPort.println();
+				break;
 
-				case RADIO_MODE:
-					
-					break;
-				case RADIO_STATE:
-
-					break;
-				case RADIO_REMOTE:
-
-					break;
-				case RADIO_WAY_POINT:
-			
-					break;
-		
-				case RADIO_CONFIG:
-			
-					break;
-
-				//sending data to the webserver by using Json for case GPS, WIND, COMP, NAV
-				// reference: github-> mo-thunderz, ESP32WiFiPart2->ESP32WebserverWebsocketJson
-				case RADIO_GPS:
-					{
-					String JsonString = "";
-					StaticJsonDocument<256> doc;
-					JsonObject object = doc.to<JsonObject>();
-					object["latitude"] = (float)radio_msg.fields.gps.data.lat/1000000;
-					object["longitude"] = (float)radio_msg.fields.gps.data.lon/1000000;
-					serializeJson(doc, JsonString);
-					webSocket.broadcastTXT(JsonString);
-					}
-					break;
-
-				case RADIO_WIND:
-					{
-					String JsonString = "";
-					StaticJsonDocument<256> doc;
-					JsonObject object = doc.to<JsonObject>();
-					object["wind_direction"] = (float)radio_msg.fields.wind.data.angle/10;
-					object["wind_speed"] = (float)radio_msg.fields.wind.data.speed/10;
-					serializeJson(doc, JsonString);
-					webSocket.broadcastTXT(JsonString);
-					}				
-					break;
-
-				case RADIO_COMP:
-					{
-					String JsonString = "";
-					StaticJsonDocument<256> doc;
-					JsonObject object = doc.to<JsonObject>();
-					object["comp_reading"]= radio_msg.fields.comp.data.type;
-					object["yaw"] = (float)radio_msg.fields.comp.data.data.fields[0]/10;
-					object["pitch"] = (float)radio_msg.fields.comp.data.data.fields[1]/10;
-					object["row"] = (float)radio_msg.fields.comp.data.data.fields[2]/10;
-					serializeJson(doc, JsonString);
-					webSocket.broadcastTXT(JsonString);
-					}				
-					break;
-
-				case RADIO_NAV:
-					{
-					String JsonString = "";
-					StaticJsonDocument<256> doc;
-					JsonObject object = doc.to<JsonObject>();
-					object["lat"] = (float)radio_msg.fields.nav.wp.pos.lat/1000000;
-					object["lon"] = (float)radio_msg.fields.nav.wp.pos.lon/1000000;
-					object["rad"] = radio_msg.fields.nav.wp.rad;
-					object["distance"] = radio_msg.fields.nav.distance;
-					object["bearing"] = (float)radio_msg.fields.nav.bearing/10;
-					object["course"] = (float)radio_msg.fields.nav.course/10;
-					object["rudder_angle"] = radio_msg.fields.nav.rudder_angle;
-					object["sail_angle"] = radio_msg.fields.nav.sail_angle;
-					serializeJson(doc, JsonString);
-					webSocket.broadcastTXT(JsonString);
-					}	
-					break;
-					
-				case RADIO_RESET:
-
-					Serial.print("Reset cause: ");
-					Serial.println(radio_msg.fields.reset.cause);
-					break;
+			case RADIO_MODE:
 				
-				default:
-					Serial.println("Defaulted, bad param");
-					break;
-			}
+				break;
+			case RADIO_STATE:
+
+				break;
+			case RADIO_REMOTE:
+
+				break;
+			case RADIO_WAY_POINT:
+		
+				break;
+	
+			case RADIO_CONFIG:
+		
+				break;
+
+			case RADIO_GPS:
+				lat = (float)radio_msg.fields.gps.data.lat/1000000;
+				lon = (float)radio_msg.fields.gps.data.lon/1000000;
+				break;
+
+			case RADIO_WIND:
+				wind_dir = (float)radio_msg.fields.wind.data.angle/10;
+				wind_speed = (float)radio_msg.fields.wind.data.speed/10;
+				break;
+			
+			case RADIO_COMP:
+				comp_reading = radio_msg.fields.comp.data.type;
+				yaw = (float)radio_msg.fields.comp.data.data.fields[0]/10;
+				pitch = (float)radio_msg.fields.comp.data.data.fields[1]/10;
+				row = (float)radio_msg.fields.comp.data.data.fields[2]/10;
+				break;
+
+			case RADIO_NAV:
+				nav_lat = (float)radio_msg.fields.nav.wp.pos.lat/1000000;
+				nav_lon = (float)radio_msg.fields.nav.wp.pos.lon/1000000;
+				rad = radio_msg.fields.nav.wp.rad;
+				distance = radio_msg.fields.nav.distance;
+				bearing= (float)radio_msg.fields.nav.bearing/10;
+				course= (float)radio_msg.fields.nav.course/10;
+				r_angle = (uint16_t)radio_msg.fields.nav.rudder_angle;
+				s_angle = radio_msg.fields.nav.sail_angle;
+				break;
+				
+			case RADIO_RESET:
+
+				Serial.print("Reset cause: ");
+				Serial.println(radio_msg.fields.reset.cause);
+				break;
+			
+			default:
+				Serial.println("Defaulted, bad param");
+				break;
 		}
 	}
 
+	// Update webserver broadcast
+	{
+		String JsonString = "";
+		StaticJsonDocument<256> doc;
+		JsonObject object = doc.to<JsonObject>();
+
+		// GPS data:
+		object["latitude"] = lat;
+		object["longitude"] = lon;
+
+		// Wind data:
+		object["wind_direction"] = wind_dir;
+		object["wind_speed"] = wind_speed;
+
+		// Comp data:
+		object["comp_reading"]= comp_reading;
+		object["yaw"] = yaw;
+		object["pitch"] = pitch;
+		object["row"] = row;
+
+		// Nav data:
+		object["lat"] = nav_lat;
+		object["lon"] = nav_lon;
+		object["rad"] = rad;
+		object["distance"] = distance;
+		object["bearing"] = bearing;
+		object["course"] = course;
+		object["rudder_angle"] = r_angle;
+		object["sail_angle"] = s_angle;
+
+		serializeJson(doc, JsonString);
+		webSocket.broadcastTXT(JsonString);
+	}
+
+	// delay(1500);	
 	memset(msg, 0, RADIO_MSG_BUFFER_LENGTH);
 }

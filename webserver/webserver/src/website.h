@@ -75,7 +75,7 @@
                     <fieldset class='round'>\
                     <h3>Compass</h3>\
                     <p>Compass Reading Type:<span id='comp_reading'>-</span></p>\
-                    <p>Yaw: <span id='yaw'>-</span></p>\
+                    <p>Yaw/Heading: <span id='yaw'>-</span></p>\
                     <p>Pitch: <span id='pitch'>-</span></p>\
                     <p>Row: <span id='row'>-</span></p>\
                     </fieldset>\
@@ -88,8 +88,8 @@
                     <h2>Control Data</h2>\
                     <fieldset class='round'>\
                     <form action='/get'>\
-                    Rudder[5,255]: <input type='text' name='rudder'><br>\
-                    Sail[0,145]: <input type='text' name='sail'><br>\
+                    Rudder[70,240]: <input type='text' name='rudder'><br>\
+                    Sail[5,140]: <input type='text' name='sail'><br>\
                     <input type='submit' value='Submit'>\
                     </form>\
                     </fieldset>\
@@ -135,6 +135,7 @@
                         document.getElementById('course').innerHTML = obj.course;\
                         document.getElementById('rudder_angle').innerHTML = obj.rudder_angle;\
                         document.getElementById('sail_angle').innerHTML = obj.sail_angle;\
+                        document.getElementById('angel').innerHTML = obj.sail_angle;\
                         console.log(obj.latitude);\
                         console.log(obj.longitude);\
                         console.log(obj.wind-direction);\
@@ -151,6 +152,7 @@
                         console.log(obj.course);\
                         console.log(obj.rudder_angle);\
                         console.log(obj.sail_angle);\
+                        console.log(obj.angel);\
                     }\
                     window.onload = function(event) {\
                         init();\
